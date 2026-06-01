@@ -10,7 +10,10 @@ struct Node {
     Node(int k, int v) : key(k), value(v), next(nullptr) {}
 };
 
+
+
 class SinglyLinkedList {
+    friend class HashTableList; // Pozwala HashTableList na dostęp do prywatnych członków
 private:
     Node* head;
     Node* tail;
