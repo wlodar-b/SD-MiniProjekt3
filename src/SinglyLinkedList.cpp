@@ -1,4 +1,4 @@
-#include "singlyLinkedList.hpp"
+#include "SinglyLinkedList.hpp"
 #include <iostream>
 
 SinglyLinkedList::SinglyLinkedList() : head(nullptr), tail(nullptr), size(0) {}
