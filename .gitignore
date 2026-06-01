@@ -1,0 +1,15 @@
+# Pliki obiektowe i wykonywalne
+*.o
+*.out
+*.exe
+*.bin
+
+# Foldery generowane przez IDE i kompilatory
+.vscode/
+.idea/
+build/
+out/
+
+# Inne pliki tymczasowe
+*.log
+.DS_Store
