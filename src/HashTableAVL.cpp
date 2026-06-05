@@ -230,3 +230,149 @@ void AVLTree::display() {
 int AVLTree::getSize() {
     return size;
 }
+
+
+// =====================================================================
+//  HashTableAVL - tablica mieszająca, gdzie każdy kubełek to drzewo AVL
+// =====================================================================
+
+HashTableAVL::HashTableAVL(int initialCapacity) {
+    capacity = initialCapacity;
+    size = 0;
+    maxLoadFactor = 0.75f;
+
+    // Dynamiczna alokacja tablicy wskaźników na drzewa
+    table = new AVLTree*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        table[i] = nullptr; // Inicjalizacja pustych kubełków
+    }
+}
+
+// Konstruktor kopiujący - głęboka kopia (każdy kubełek kopiowany osobno).
+// Potrzebny, by kopiowanie całej tablicy nie powodowało podwójnego zwalniania pamięci.
+HashTableAVL::HashTableAVL(const HashTableAVL& other) {
+    capacity = other.capacity;
+    size = other.size;
+    maxLoadFactor = other.maxLoadFactor;
+
+    table = new AVLTree*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        if (other.table[i] != nullptr) {
+            table[i] = new AVLTree(*other.table[i]); // Kopia drzewa (konstruktor kopiujący AVLTree)
+        } else {
+            table[i] = nullptr;
+        }
+    }
+}
+
+HashTableAVL::~HashTableAVL() {
+    // Usuwamy każde zaalokowane drzewo
+    for (int i = 0; i < capacity; i++) {
+        if (table[i] != nullptr) {
+            delete table[i];
+        }
+    }
+    // Zwalniamy główną tablicę
+    delete[] table;
+}
+
+int HashTableAVL::hashFunction(int key) {
+    // Zabezpieczenie przed ujemnymi kluczami
+    int positiveKey = (key < 0) ? -key : key;
+    return positiveKey % capacity;
+}
+
+// Rekurencyjnie wstawia wszystkie pary z drzewa do bieżącej (nowej) tablicy
+void HashTableAVL::reinsertTree(AVLTree::Node* node) {
+    if (node == nullptr) return;
+    reinsertTree(node->left_child);
+    insert(node->key, node->value);
+    reinsertTree(node->right_child);
+}
+
+void HashTableAVL::rehash() {
+    int oldCapacity = capacity;
+    AVLTree** oldTable = table;
+
+    // Relokacja: podwajamy pojemność tablicy
+    capacity *= 2;
+    table = new AVLTree*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        table[i] = nullptr;
+    }
+
+    size = 0; // Resetujemy licznik, bo insert go ponownie zaktualizuje
+
+    // Przemieszanie elementów ze starej tablicy do nowej
+    for (int i = 0; i < oldCapacity; i++) {
+        if (oldTable[i] != nullptr) {
+            reinsertTree(oldTable[i]->root); // Dostęp do root dzięki relacji friend
+            delete oldTable[i];              // Zwalniamy stare drzewo po skopiowaniu
+        }
+    }
+    delete[] oldTable; // Zwalniamy starą tablicę
+}
+
+void HashTableAVL::insert(int key, int value) {
+    // Sprawdzenie, czy potrzebna jest relokacja
+    if ((float)(size + 1) / capacity > maxLoadFactor) {
+        rehash();
+    }
+
+    int index = hashFunction(key);
+
+    // Dynamiczna alokacja drzewa dla danego kubełka (lazy initialization)
+    if (table[index] == nullptr) {
+        table[index] = new AVLTree();
+    }
+
+    // Zwiększamy rozmiar słownika tylko wtedy, gdy to nowy klucz
+    int tmp;
+    if (!table[index]->find(key, tmp)) {
+        size++;
+    }
+
+    // Dodanie lub aktualizacja wartości w drzewie
+    table[index]->insert(key, value);
+}
+
+void HashTableAVL::remove(int key) {
+    int index = hashFunction(key);
+
+    if (table[index] != nullptr) {
+        int tmp;
+        // Usuwamy tylko, jeśli klucz faktycznie istnieje (by poprawnie zliczać size)
+        if (table[index]->find(key, tmp)) {
+            table[index]->remove(key);
+            size--;
+
+            // Opcjonalne zwalnianie pamięci: usuwamy puste drzewo
+            if (table[index]->getSize() == 0) {
+                delete table[index];
+                table[index] = nullptr;
+            }
+        }
+    }
+}
+
+bool HashTableAVL::find(int key, int& out_value) {
+    int index = hashFunction(key);
+
+    if (table[index] == nullptr) {
+        return false;
+    }
+
+    return table[index]->find(key, out_value);
+}
+
+void HashTableAVL::display() {
+    std::cout << "--- TABLICA MIESZAJACA (KUBELKI Z DRZEWEM AVL) ---\n";
+    std::cout << "Elementow: " << size << " | Pojemnosc tablicy: " << capacity << "\n";
+    for (int i = 0; i < capacity; i++) {
+        if (table[i] != nullptr) {
+            std::cout << "Kubelek [" << i << "]: ";
+            table[i]->display();
+        }
+    }
+    std::cout << "--------------------------------------------------\n";
+}

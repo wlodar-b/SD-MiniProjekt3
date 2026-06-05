@@ -1,7 +1,10 @@
 #ifndef HASHTABLEAVL_HPP
 #define HASHTABLEAVL_HPP
 
+#include "IHashTable.hpp"
+
 class AVLTree {
+    friend class HashTableAVL; // Pozwala tablicy mieszającej przejść po węzłach przy rehashingu
 private:
     struct Node {
         int key;
@@ -52,4 +55,37 @@ public:
     int getSize();
 };
 
-#endif 
+
+
+// Tablica mieszająca z adresowaniem łańcuchowym, gdzie każdy kubełek to drzewo AVL.
+// Wariant 2 projektu. Dzięki drzewom AVL nawet przy wielu kolizjach w jednym
+// kubełku wyszukiwanie pozostaje szybkie - O(log k), gdzie k to rozmiar kubełka.
+class HashTableAVL : public IHashTable {
+private:
+    AVLTree** table;          // Dynamiczna tablica wskaźników na drzewa AVL
+    int capacity;             // Aktualna pojemność tablicy
+    int size;                 // Aktualna liczba wszystkich par w słowniku
+    float maxLoadFactor;      // Próg wypełnienia, po którym powiększamy tablicę
+
+    // Prywatna funkcja mieszająca (zwraca indeks kubełka)
+    int hashFunction(int key);
+
+    // Prywatna funkcja relokująca tablicę i przemieszująca elementy (rehashing)
+    void rehash();
+
+    // Pomocnicza: wstawia wszystkie pary z drzewa do bieżącej tablicy (używana w rehash)
+    void reinsertTree(AVLTree::Node* node);
+
+public:
+    HashTableAVL(int initialCapacity = 16);
+    HashTableAVL(const HashTableAVL& other); // Konstruktor kopiujący (głęboka kopia)
+    ~HashTableAVL() override;
+
+    // Implementacja metod z interfejsu IHashTable
+    void insert(int key, int value) override;
+    void remove(int key) override;
+    bool find(int key, int& out_value) override;
+    void display() override;
+};
+
+#endif // HASHTABLEAVL_HPP
