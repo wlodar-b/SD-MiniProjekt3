@@ -13,6 +13,23 @@ HashTableList::HashTableList(int initialCapacity) {
     }
 }
 
+// Konstruktor kopiujący - głęboka kopia (każdy kubełek-lista kopiowany osobno).
+// Dzięki temu kopiowanie tablicy (np. w TimeMeasurer) nie powoduje podwójnego zwalniania pamięci.
+HashTableList::HashTableList(const HashTableList& other) {
+    capacity = other.capacity;
+    size = other.size;
+    maxLoadFactor = other.maxLoadFactor;
+
+    table = new SinglyLinkedList*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        if (other.table[i] != nullptr) {
+            table[i] = new SinglyLinkedList(*other.table[i]); // Kopia listy (konstruktor kopiujący SinglyLinkedList)
+        } else {
+            table[i] = nullptr;
+        }
+    }
+}
+
 HashTableList::~HashTableList() {
     // Czyszczenie pamięci - usuwamy każdą alokowaną listę
     for (int i = 0; i < capacity; i++) {

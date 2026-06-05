@@ -1,5 +1,10 @@
 #include "Utils.hpp"
 
+// Definicja statycznej tablicy poza klasą.
+// Wymagana w C++11/14, bo SEEDS[i] pobiera adres elementu (odr-use).
+// W C++17 składowe constexpr są domyślnie inline, więc ta linia jest tam nieszkodliwa.
+constexpr std::uint32_t RandomGenerator::SEEDS[5];
+
 RandomGenerator::RandomGenerator()
     : rng(SEEDS[0]),
       valueDist(std::numeric_limits<std::int32_t>::min(),

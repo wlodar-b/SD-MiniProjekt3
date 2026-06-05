@@ -19,6 +19,7 @@ private:
 
 public:
     HashTableList(int initialCapacity = 16);
+    HashTableList(const HashTableList& other); // Konstruktor kopiujący (głęboka kopia)
     ~HashTableList() override;
 
     // Implementacja metod z interfejsu IHashTable

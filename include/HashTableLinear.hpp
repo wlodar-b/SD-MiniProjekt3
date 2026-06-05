@@ -32,6 +32,7 @@ private:
 
 public:
     HashTableLinear(int initialCapacity = 16);
+    HashTableLinear(const HashTableLinear& other); // Konstruktor kopiujący (głęboka kopia)
     ~HashTableLinear() override;
 
     void insert(int key, int value) override;

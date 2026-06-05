@@ -10,6 +10,20 @@ HashTableLinear::HashTableLinear(int initialCapacity) {
     table = new HashEntry[capacity]; // Alokacja bezpośrednio ciągłego bloku pamięci
 }
 
+// Konstruktor kopiujący - głęboka kopia tablicy wpisów.
+// HashEntry to prosta struktura, więc wystarczy skopiować elementy jeden po drugim.
+HashTableLinear::HashTableLinear(const HashTableLinear& other) {
+    capacity = other.capacity;
+    size = other.size;
+    deletedCount = other.deletedCount;
+    maxLoadFactor = other.maxLoadFactor;
+
+    table = new HashEntry[capacity];
+    for (int i = 0; i < capacity; i++) {
+        table[i] = other.table[i];
+    }
+}
+
 HashTableLinear::~HashTableLinear() {
     delete[] table;
 }

@@ -10,6 +10,7 @@
 build/
 out/
 
+
 # Inne pliki tymczasowe
 *.log
 .DS_Store
