@@ -3,9 +3,9 @@
 
 // Węzeł listy dostosowany do słownika (klucz-wartość)
 struct Node {
-    int key;
-    int value;
-    Node* next;
+    int key; // klucz
+    int value; // wartosc powiazana z kluczem
+    Node* next; // wskaznik na kolejny element
 
     Node(int k, int v) : key(k), value(v), next(nullptr) {}
 };
@@ -15,9 +15,9 @@ struct Node {
 class SinglyLinkedList {
     friend class HashTableList; // Pozwala HashTableList na dostęp do prywatnych członków
 private:
-    Node* head;
-    Node* tail;
-    int size;
+    Node* head; // wskaznik na pierwszy element listy
+    Node* tail; // wskaznik na ostatni element listy
+    int size; // liczba elementów w liście
 
 public:
     SinglyLinkedList();

@@ -1,17 +1,18 @@
 #include "HashTableLinear.hpp"
 #include <iostream>
 
+// Konstruktor z domyślną pojemnością
 HashTableLinear::HashTableLinear(int initialCapacity) {
-    capacity = initialCapacity;
-    size = 0;
-    deletedCount = 0;
-    maxLoadFactor = 0.5f; 
+    capacity = initialCapacity; // Ustawiamy początkową pojemność
+    size = 0; // brak elementow na poczatku
+    deletedCount = 0; // brak nagrobków na poczatku
+    maxLoadFactor = 0.5f; // 
     
     table = new HashEntry[capacity]; // Alokacja bezpośrednio ciągłego bloku pamięci
 }
 
-// Konstruktor kopiujący - głęboka kopia tablicy wpisów.
-// HashEntry to prosta struktura, więc wystarczy skopiować elementy jeden po drugim.
+// Konstruktor kopiujący
+// HashEntry to prosta struktura, więc wystarczy skopiować elementy jeden po drugim
 HashTableLinear::HashTableLinear(const HashTableLinear& other) {
     capacity = other.capacity;
     size = other.size;
@@ -33,6 +34,7 @@ int HashTableLinear::hashFunction(int key) {
     return positiveKey % capacity;
 }
 
+// Funkcja relokująca tablicę
 void HashTableLinear::rehash() {
     int oldCapacity = capacity;
     HashEntry* oldTable = table;
@@ -53,6 +55,7 @@ void HashTableLinear::rehash() {
     delete[] oldTable;
 }
 
+// Dodanie lub aktualizacja pary
 void HashTableLinear::insert(int key, int value) {
     if ((float)(size + deletedCount + 1) / capacity > maxLoadFactor) {
         rehash();
@@ -84,6 +87,7 @@ void HashTableLinear::insert(int key, int value) {
     size++;
 }
 
+// Usunięcie pary
 void HashTableLinear::remove(int key) {
     int index = hashFunction(key);
 

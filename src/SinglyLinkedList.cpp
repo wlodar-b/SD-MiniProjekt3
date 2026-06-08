@@ -1,8 +1,11 @@
 #include "SinglyLinkedList.hpp"
 #include <iostream>
 
+// Implementacja metod klasy SinglyLinkedList
 SinglyLinkedList::SinglyLinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
+
+// Konstruktor kopiujący - tworzy głęboką kopię listy 
 SinglyLinkedList::SinglyLinkedList(const SinglyLinkedList& other) : head(nullptr), tail(nullptr), size(0) {
     Node* current = other.head;
     while (current != nullptr) {
@@ -11,10 +14,12 @@ SinglyLinkedList::SinglyLinkedList(const SinglyLinkedList& other) : head(nullptr
     }
 }
 
+// Destruktor
 SinglyLinkedList::~SinglyLinkedList() {
     clear();
 }
 
+// Metoda insert - dodaje nowa pare lub aktualizuje istniejąca
 void SinglyLinkedList::insert(int key, int value) {
     // Sprawdzamy, czy klucz już istnieje
     Node* existingNode = find(key);
@@ -23,7 +28,7 @@ void SinglyLinkedList::insert(int key, int value) {
         return;
     }
 
-    // Dodawanie na początek - O(1) (najlepsze dla tablic mieszających)
+    // Dodawanie na początek - O(1) 
     Node* newNode = new Node(key, value);
     if (head == nullptr) {
         head = tail = newNode;
@@ -34,6 +39,7 @@ void SinglyLinkedList::insert(int key, int value) {
     size++;
 }
 
+// Metoda remove - usuwa węzeł o podanym kluczu
 bool SinglyLinkedList::remove(int key) {
     if (head == nullptr) return false;
 
@@ -69,6 +75,7 @@ bool SinglyLinkedList::remove(int key) {
     return false; // Nie znaleziono klucza
 }
 
+// Metoda find - zwraca wskaźnik na węzeł o podanym kluczu lub nullptr
 Node* SinglyLinkedList::find(int key) {
     Node* current = head;
     while (current != nullptr) {
@@ -80,6 +87,7 @@ Node* SinglyLinkedList::find(int key) {
     return nullptr;
 }
 
+// Metoda clear - usuwa wszystkie elementy z listy
 void SinglyLinkedList::clear() {
     Node* current = head;
     while (current != nullptr) {
@@ -91,6 +99,7 @@ void SinglyLinkedList::clear() {
     size = 0;
 }
 
+// Metoda display - wyświetla zawartość listy
 void SinglyLinkedList::display() {
     Node* current = head;
     while (current != nullptr) {
@@ -100,6 +109,7 @@ void SinglyLinkedList::display() {
     std::cout << "nullptr\n";
 }
 
+// Metoda getSize - zwraca liczbę elementów w liście
 int SinglyLinkedList::getSize() {
     return size;
 }

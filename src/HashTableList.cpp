@@ -1,10 +1,11 @@
 #include "HashTableList.hpp"
 #include <iostream>
 
+// Konstruktor z domyślną pojemnością
 HashTableList::HashTableList(int initialCapacity) {
     capacity = initialCapacity;
     size = 0;
-    maxLoadFactor = 0.75f;
+    maxLoadFactor = 0.75f; // domyślny współczynnik obciążenia
     
     // Dynamiczna alokacja tablicy wskaźników na listy
     table = new SinglyLinkedList*[capacity];
@@ -13,8 +14,7 @@ HashTableList::HashTableList(int initialCapacity) {
     }
 }
 
-// Konstruktor kopiujący - głęboka kopia (każdy kubełek-lista kopiowany osobno).
-// Dzięki temu kopiowanie tablicy (np. w TimeMeasurer) nie powoduje podwójnego zwalniania pamięci.
+// Konstruktor kopiujący 
 HashTableList::HashTableList(const HashTableList& other) {
     capacity = other.capacity;
     size = other.size;
@@ -23,15 +23,15 @@ HashTableList::HashTableList(const HashTableList& other) {
     table = new SinglyLinkedList*[capacity];
     for (int i = 0; i < capacity; i++) {
         if (other.table[i] != nullptr) {
-            table[i] = new SinglyLinkedList(*other.table[i]); // Kopia listy (konstruktor kopiujący SinglyLinkedList)
+            table[i] = new SinglyLinkedList(*other.table[i]); // Kopia listy
         } else {
             table[i] = nullptr;
         }
     }
 }
 
+// Destruktor
 HashTableList::~HashTableList() {
-    // Czyszczenie pamięci - usuwamy każdą alokowaną listę
     for (int i = 0; i < capacity; i++) {
         if (table[i] != nullptr) {
             delete table[i];
@@ -41,21 +41,25 @@ HashTableList::~HashTableList() {
     delete[] table; 
 }
 
+// Funkcja mieszająca
 int HashTableList::hashFunction(int key) {
     // Zabezpieczenie przed ujemnymi kluczami
     int positiveKey = (key < 0) ? -key : key;
     return positiveKey % capacity;
 }
 
+// Funkcja relokująca tablicę i przemieszczająca elementy
 void HashTableList::rehash() {
-    int oldCapacity = capacity;
-    SinglyLinkedList** oldTable = table;
+    int oldCapacity = capacity; // Zapamiętujemy starą pojemność
+    SinglyLinkedList** oldTable = table; // Zapamiętujemy starą tablicę
 
     // Relokacja: Podwajamy pojemność tablicy
-    capacity *= 2;
-    table = new SinglyLinkedList*[capacity];
+    capacity *= 2; // Podwajamy pojemność
+
+    // Alokujemy nowa dwukrotniie wieksza tablice i wypelniamy nullptr
+    table = new SinglyLinkedList*[capacity]; 
     for (int i = 0; i < capacity; i++) {
-        table[i] = nullptr;
+        table[i] = nullptr; 
     }
 
     size = 0; // Resetujemy licznik, bo insert go zaktualizuje
@@ -63,7 +67,7 @@ void HashTableList::rehash() {
     // Przemieszanie elementów ze starej tablicy do nowej
     for (int i = 0; i < oldCapacity; i++) {
         if (oldTable[i] != nullptr) {
-            // Bezpośredni dostęp do Node dzięki relacji friend
+            // Jesli stary kubelek nie byl pusty to wyciagamy jego glowe i przechodzimy przez wszystkie wezly
             Node* current = oldTable[i]->head;
             while (current != nullptr) {
                 insert(current->key, current->value);
@@ -75,6 +79,7 @@ void HashTableList::rehash() {
     delete[] oldTable; // Zwalniamy starą tablicę
 }
 
+// Dodanie lub aktualizacja pary 
 void HashTableList::insert(int key, int value) {
     // Sprawdzenie, czy potrzebna jest relokacja
     if ((float)(size + 1) / capacity > maxLoadFactor) {
@@ -83,7 +88,7 @@ void HashTableList::insert(int key, int value) {
 
     int index = hashFunction(key);
 
-    // Dynamiczna alokacja listy dla danego kubełka (lazy initialization)
+    // Dynamiczna alokacja listy dla danego kubełka 
     if (table[index] == nullptr) {
         table[index] = new SinglyLinkedList();
     }
@@ -97,6 +102,7 @@ void HashTableList::insert(int key, int value) {
     table[index]->insert(key, value);
 }
 
+// Usunięcie pary
 void HashTableList::remove(int key) {
     int index = hashFunction(key);
 

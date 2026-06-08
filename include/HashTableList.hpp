@@ -6,21 +6,21 @@
 
 class HashTableList : public IHashTable {
 private:
-    SinglyLinkedList** table; // Dynamiczna tablica wskaźników na listy jednokierunkowe
-    int capacity;             // Aktualna pojemność tablicy
-    int size;                 // Aktualna liczba wszystkich par w słowniku
-    float maxLoadFactor;      // Próg wypełnienia, po którym następuje powiększenie tablicy
+    SinglyLinkedList** table; // Tablica wskaźników na listy (kubełki) 
+    int capacity; // Rozmiar tablicy 
+    int size; // Liczba elementów w tablicy
+    float maxLoadFactor; // Maksymalny współczynnik obciążenia
 
-    // Prywatna funkcja mieszająca (zwraca indeks kubełka)
+    // funkcja mieszająca (zwraca indeks kubełka)
     int hashFunction(int key);
 
-    // Prywatna funkcja relokująca tablicę i przemieszująca elementy (rehashing)
+    // funkcja relokująca tablicę i przemieszująca elementy
     void rehash();
 
 public:
-    HashTableList(int initialCapacity = 16);
-    HashTableList(const HashTableList& other); // Konstruktor kopiujący (głęboka kopia)
-    ~HashTableList() override;
+    HashTableList(int initialCapacity = 16); // Konstruktor z domyślną pojemnością
+    HashTableList(const HashTableList& other); // Konstruktor kopiujący
+    ~HashTableList() override; // Destruktor
 
     // Implementacja metod z interfejsu IHashTable
     void insert(int key, int value) override;

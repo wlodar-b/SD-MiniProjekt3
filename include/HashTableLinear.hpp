@@ -5,34 +5,35 @@
 
 // Stany dla pojedynczego kubełka w adresowaniu otwartym
 enum EntryState {
-    EMPTY,
-    OCCUPIED,
-    DELETED
+    EMPTY, // komorka jesty pusta i nigdy nic w niej nie bylo 
+    OCCUPIED, // komórka przechowuje aktualna pare
+    DELETED // nagrobek, element tu byl ale zostal usuniet
 };
 
 // Struktura pojedynczego wpisu w tablicy
 struct HashEntry {
-    int key;
-    int value;
-    EntryState state;
+    int key; // klucz
+    int value; // wartosc
+    EntryState state; // stan wpisu
 
-    HashEntry() : key(0), value(0), state(EMPTY) {}
+    HashEntry() : key(0), value(0), state(EMPTY) {} // Konstruktor domyślny - inicjalizuje jako puste
 };
 
+// Implementacja tablicy mieszającej
 class HashTableLinear : public IHashTable {
 private:
-    HashEntry* table;         // Dynamiczna tablica przechowująca elementy bezpośrednio
-    int capacity;             // Aktualna pojemność tablicy
-    int size;                 // Liczba zajętych elementów (OCCUPIED)
-    int deletedCount;         // Liczba usuniętych elementów (DELETED) - potrzebne do współczynnika wypełnienia
-    float maxLoadFactor;      // Próg wypełnienia (zalecany niższy dla adresowania otwartego, np. 0.5 - 0.7)
+    HashEntry* table; // Tablica dynamiczna przechowująca wpisy
+    int capacity; // Rozmiar tablicy
+    int size; // Liczba przechowywanych elementów
+    int deletedCount; // Liczba usuniętych elementów (nagrobków)
+    float maxLoadFactor; // Maksymalny współczynnik obciążenia
 
-    int hashFunction(int key);
+    int hashFunction(int key); // Funkcja mieszająca
     void rehash();
 
 public:
     HashTableLinear(int initialCapacity = 16);
-    HashTableLinear(const HashTableLinear& other); // Konstruktor kopiujący (głęboka kopia)
+    HashTableLinear(const HashTableLinear& other); // Konstruktor kopiujący 
     ~HashTableLinear() override;
 
     void insert(int key, int value) override;
